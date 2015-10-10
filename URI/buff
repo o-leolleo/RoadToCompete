@@ -1,0 +1,75 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int> vi;
+#define LSOne(x) (x & (-x))
+#define P 1000000007
+class FT
+{
+private:  vector<vi> ft;
+        int rsq(int x, int y) {
+                int sum = 0;
+                for (; x; x -= LSOne(x))
+                        for (int k = y; k; k -= LSOne(k)) sum += ft[x][k];
+                return sum;
+        }
+public:
+        void init(int N, int M) {
+                ft.assign(N + 1, vi());
+                for (int a = 0; a <= N; ++a)
+                        ft[a].assign(N + 1, 0);
+        }
+
+        void increment(int a, int b, int v) {
+                for (;a < ft.size(); a += LSOne(a))
+                        for (int k = b; k < ft[a].size(); k += LSOne(k)) ft[a][k] += v;
+        }
+
+        int rsq(int a, int b, int c, int d) {
+                int sum = rsq(c, d);
+                if (a - 1 > 0) sum -= rsq(a - 1, d);
+                if (b - 1 > 0) sum -= rsq(c, b - 1);
+                if (a - 1 > 0 && b - 1 > 0) sum += rsq(a - 1, b - 1);
+                return sum;
+        }
+};
+int C[2][1110];
+int binom(int N, int K) {
+        for (int n = 1; n <= N; ++n) {
+                C[0][n - 1] = 1;
+                C[0][0] = 1;
+                for (int k = 1; k < n; ++k)
+                        C[1][k] = (C[0][k-1] + C[0][k]) % P;
+                for (int k = 1; k < n; ++k)
+                        C[0][k] = C[1][k];
+        }
+        return C[0][K];
+}
+int main()
+{
+        int N, M, winterfell[1010][1010], day = 0;
+        FT boneco; char buff[1000];
+        scanf("%d %d\n", &N, &M);
+        boneco.init(N, M);
+        while (gets(buff) != NULL) {
+                int v[6], tam = 0; v[0] = 0;
+                for (int a = 0; buff[a]; ++a) {
+                        if (buff[a] == ' ') {
+                                tam++;
+                                v[tam] = 0;
+                                continue;
+                        }
+                        v[tam] += 10 * v[tam] + (buff[a] - '0');
+                }
+                tam++;
+                if (tam == 3) {
+                        boneco.increment(v[0], v[1], v[2]);
+                        winterfell[v[0]][v[1]] = v[2];
+                } else if (tam == 2) {
+                        boneco.increment(v[0], v[1], -winterfell[v[0]][v[1]]);
+                        winterfell[v[0]][v[1]] = 0;
+                } else {
+                        int b = boneco.rsq(v[0], v[1], v[2], v[3]);
+                        printf("Day #%d: %d\n", ++day, b == 0 ? 1 : binom(v[4] + b - 1, b - 1));
+                }
+        }
+}
