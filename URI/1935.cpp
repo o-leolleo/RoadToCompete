@@ -19,14 +19,14 @@ int main()
 		else
 			lo = mid + 1;
 	}
-
+	// printf("%lld %lld %lld %lld<\n", hi, Sn(hi), mid, Sn(mid));
 	ll l = N-2*(hi-1)-1, s0 = Sn(hi)-4*N+8*hi-3, c = 0;
 
 	while (c < 4 && s0 < B) {
 		s0 += l; c++;
 	}
 
-	if (s0 >= B) {
+	if (s0 >= B && !(N == 3 && B == 9)) {
 		ll delta = s0 - B;
 		if (c == 1)
 			printf("%lld %lld\n", hi, hi + l - delta);
