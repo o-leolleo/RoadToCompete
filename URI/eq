@@ -1,4 +1,0 @@
-\documentclass[12pt, a4paper]{article}
-\begin{document}
-$$!\mbox{Power}(a,\,b)= \begin{cases} 1, & \mbox{if }b\mbox{ = 0} \\ a\times\mbox{Power}(a,\,b-1), & \mbox{if }b\mbox{ is odd} \\ \mbox{Power}(a,\,b/2)^2, & \mbox{if }b\mbox{ is even} \end{cases}$$
-\end{document}
