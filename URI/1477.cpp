@@ -37,7 +37,6 @@ private: vector<int> st[3], lazy;
 		 		lazy[lt(p)] = (lazy[lt(p)] + lazy[p]) % 3;
 		 		lazy[rt(p)] = (lazy[rt(p)] + lazy[p]) % 3;
 		 	}
-
 		 	lazy[p] = 0;
 		 }
 
