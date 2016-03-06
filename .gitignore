@@ -1,0 +1,16 @@
+*.txt
+*.out
+*.exe
+*.zip
+*.sol
+*.in
+*.out
+*.swp
+*~
+pali*
+contests/
+teste*
+1090.cpp
+*.jpg
+in_*
+ACM-ICPC_south_america_contest_2015/*
