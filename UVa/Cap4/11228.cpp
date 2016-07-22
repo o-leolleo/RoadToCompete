@@ -1,61 +1,86 @@
 #include <bits/stdc++.h>
 using namespace std;
-int T, n, r;
+typedef long long ll;
+typedef pair<ll, ll> pll;
 typedef pair<int, int> ii;
-pair<int, int> node;
-pair< int, ii > EL;
-int dist(ii a, ii b) { return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second); }
+double roads, railroads;
+int states;
+vector< pll > vert;
+vector< pair<double, ii> > edgeList;
 
 class UnionFind {
 private: vector<int> p, rank;
 public:
-	 UnionFind(int N) {
-		 rank.assign(N, 0);
-		 p.assign(N, 0);
-		 for (int i = 0; i < N; ++i) p[i] = i; 
-	 }
-
-	 int findSet(int i) { return (p[i] == i) ? i : (p[i] = findSet(p[i])); }
-	 bool isSameSet(int i, int j) { return findSet(i) == findSet(j); }
-	 void unionSet(int i, int j) {
+	UnionFind(int N) { p.assign(N, 0); rank.assign(N, 0);
+		for (int i = 0; i < p.size(); ++i) p[i] = i;
+	}
+	int findSet(int i) { return (i == p[i]) ? i : (p[i] = findSet(p[i])); }
+	bool isSameSet(int i, int j) { return findSet(i) == findSet(j); }
+	void unionSet(int i, int j) {
 		if (!isSameSet(i, j)) {
 			int x = findSet(i), y = findSet(j);
-			if (rank[x] > rank[y]) p[y] = x;
-			else {
+			if (rank[x] > rank[y]) {
 				p[y] = x;
+			} else {
 				p[x] = y;
-				if (rank[x] == rank[y]) rank[y]++;
+				if (rank[x] == rank[y])
+					rank[y]++;
 			}
 		}
-	 }
+	}
+
 };
+
+double dist(pll x, pll y) {
+	return sqrt((x.first - y.first) * (x.first - y.first) + (x.second - y.second) * (x.second - y.second));
+}
+
 
 int main()
 {
-	scanf("%d %d %d\n", &T, &n, &r);
+	int T;
+	scanf("%d\n", &T);
 
-	while (T--) {
-		int x, y;
-		for (int i = 0; i < n; ++i) {
-			scanf("%d %d\n", &x, &y);
-			node[i].first = x;
-			node[i].second = y;
+	for (int c = 1; c <= T; ++c) {
+		int n;
+		ll mst_cost = 0, r;
+
+		scanf("%d %lld\n", &n, &r);
+
+		roads = railroads = 0;
+		states = 1;
+		
+		UnionFind UF(n);
+
+		while (n--) {
+			int x, y; scanf("%d %d\n", &x, &y);
+			vert.push_back(make_pair(x, y));
 		}
 
-		for (int i = 0; i < n; ++i)
-			for (int j = i+1; j < n; ++j)
-				EL.push_back(pair< int, ii >(dist(node[i],node[j]), ii(i, j)));
+	
+		for (int i = 0; i < vert.size(); ++i)
+			for (int j = i + 1; j < vert.size(); ++j)
+				edgeList.push_back(make_pair(dist(vert[i], vert[j]), make_pair(i, j)));	
 
-		sort(EL.begin(), EL.end());		
-		int mst1, mst2; mst1 = mst2 = 0;
-		UnionFind UF(n);
-		
-		for (int i = 0; i < EL.size(); ++i) {
-			pair<int, ii> front = EL[i];
+		sort(edgeList.begin(), edgeList.end());
+
+		for (int i = 0; i < edgeList.size(); ++i) {
+			pair< double, ii > front = edgeList[i];
+
 			if (!UF.isSameSet(front.second.first, front.second.second)) {
-				if (front.first <= r) mst1 += front.first;
-				else mst2 += front.first;
+				if (front.first <= r)
+					roads += front.first;
+				else {
+					railroads += front.first;
+					states++;
+				}
+
+				UF.unionSet(front.second.first, front.second.second);
 			}
 		}
+
+		printf("Case #%d: %d %lld %lld\n", c, states, (ll)round(roads), (ll)round(railroads));
+		edgeList.clear();
+		vert.clear();
 	}
 }
