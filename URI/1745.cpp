@@ -1,26 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define LEN 1000100
-int num[LEN], tam, dp[LEN][3], N;
+queue<int> q;
+typedef long long ll;
 
-int check(int id, int sum)
+ll process(int *buffer, int N)
 {
-	if (id == tam) return 0;
-	if (sum >= 0 && dp[id][sum] != -1) return dp[id][sum];
-	int &ans = dp[id][sum];
-	return ans = (int)((sum + num[id]) % 3 == 0) + check(id + 1, (sum + num[id]) % 3)
-	+ check(id + 1, 0);
+	ll cont = 0, total = 0;
+
+	for (int k = 0; k < N; ++k) {
+		if (buffer[k] && (q.empty() || (q.front()+buffer[k])%3))
+			q.push(buffer[k]);
+		else {
+			if (buffer[k]) {
+				cont = 1;
+				q.pop();
+			} else
+				cont++;
+
+			total += cont;
+		}
+	}
+
+	return total;
 }
 
 int main()
 {
-	char S[LEN]; int i;
-	memset(dp, -1, sizeof dp);
-	tam = 0; i = 0;
+	char str[LEN];
+	int N, buffer[LEN], tam;
+	ll total;
 
-	while (scanf("%c\n", &S[i]) != EOF) {
-		if (isdigit(S[i])) num[tam++] = (S[i] - '0') % 3;
-		i++;
-	}
-	printf("%d\n", check(0, 0));
+	scanf("%s\n", str);
+	N = strlen(str);
+	total = tam = 0;
+
+	for (int k = 0; k < N; ++k)
+		if (isdigit(str[k]))
+			buffer[tam++] = (str[k]-'0')%3;
+		else if (tam) {
+		 	total += process(buffer, tam);
+			tam = 0;
+		}
+
+	if (tam) total += process(buffer, tam);
+
+	printf("%lld\n", total);
 }
