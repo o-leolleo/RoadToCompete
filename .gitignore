@@ -16,3 +16,8 @@ teste*
 *.jpg
 in_*
 ACM-ICPC_south_america_contest_2015/*
+*.tar.gz
+in.py
+organize.py
+codechef/*
+harcker_hank/*
